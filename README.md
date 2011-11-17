@@ -31,7 +31,7 @@ Test:
 $ curl -d '{ "userId" : "john", "displayName" : "John Kennedy", "location": { "latitude": 51.0, "longitude": -0.1}}' localhost:9876/lol
 
 [{"userId":"john","displayName":"John Kennedy","location":{"latitude":51,"longitude":-0.1}}]
-~~
+~~~
 
 Protocol
 ========
