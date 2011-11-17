@@ -1,7 +1,7 @@
 Rump
 ----
 
-Rump is a rendez-vous server inspired by Bump. Rump matches meeting
+Rump is a rendez-vous server for mobile clients, inspired by Bump. Rump matches meeting
 request by grouping incoming requests within 3 seconds. 
 
 Location and URL based grouping is on the way...
