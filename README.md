@@ -9,7 +9,8 @@ Location and URL based grouping is on the way...
 Installation
 ============
 
-Requires Haskell Platform.
+Install Haskell Platform
+- OSX: brew install haskell-platform
 
 Clone, build, install:
 
