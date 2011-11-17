@@ -2,7 +2,7 @@ Name:                rump
 Version:             0.1
 Synopsis:            Rump rendez-vous server
 Description:         Rump rendez-vous server
-License:             AllRightsReserved
+License:             GPL v3
 Author:              Juha Paananen
 Maintainer:          juha.paananen@gmail.com
 Stability:           Experimental
