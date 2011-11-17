@@ -9,9 +9,7 @@ Location and URL based grouping is on the way...
 Installation
 ============
 
-Install Haskell Platform
-
-- OSX: brew install haskell-platform
+[Install Haskell Platform](http://hackage.haskell.org/platform/)
 
 Clone, build, install:
 
