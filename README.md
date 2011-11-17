@@ -11,7 +11,10 @@ Protocol
 
 POST /<context>
 
-request payload : { 
+Request payload:
+
+~~~ .json
+ : { 
   "userId" : "jack", 
   "displayName" : "Jack Bauer", 
   "location": {
@@ -19,10 +22,19 @@ request payload : {
     "longitude": -0.1
   }
 }
+~~~
 
-response (if no match) : []
+Response (if no match) :
 
-response (with matches) : [
+~~~ .json
+ []
+~~~
+
+Response (with matches):
+
+~~~ .json
+[
   { "userId" : "john", "displayName" : "John Kennedy", ... }
   { "userId" : "jack", "displayName" : "Jack Bauer", ... }
 ]
+~~~
