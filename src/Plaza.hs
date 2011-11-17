@@ -35,17 +35,6 @@ lookupMeeting dude = do current <- readTVar currentMeeting
                               modifyTVar (dude :) (participants m)
                               return (m, nop)
 
-modifyTVar :: (a -> a) -> TVar a -> STM()
-modifyTVar f var = do
-  val <- readTVar var
-  writeTVar var (f val)
-
-nop :: IO ()
-nop = return ()
-
-void :: IO a -> IO ()
-void action = action >> return ()
-
 newMeeting :: RumpInfo -> STM Meeting
 newMeeting dude = do
   resultHolder <- newEmptyTMVar
@@ -64,4 +53,10 @@ getParticipants :: Meeting -> STM [RumpInfo]
 getParticipants meeting = readTMVar $ resultHolder meeting
 
 toMicros = (*1000000)
+nop = return ()
+void action = action >> return ()
+modifyTVar f var = do
+  val <- readTVar var
+  writeTVar var (f val)
+
 
