@@ -10,6 +10,7 @@ Installation
 ============
 
 Install Haskell Platform
+
 - OSX: brew install haskell-platform
 
 Clone, build, install:
