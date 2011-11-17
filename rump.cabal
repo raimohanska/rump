@@ -1,10 +1,10 @@
 Name:                rump
 Version:             0.1
-Synopsis:            Project Synopsis Here
-Description:         Project Description Here
+Synopsis:            Rump rendez-vous server
+Description:         Rump rendez-vous server
 License:             AllRightsReserved
-Author:              Author
-Maintainer:          maintainer@example.com
+Author:              Juha Paananen
+Maintainer:          juha.paananen@gmail.com
 Stability:           Experimental
 Category:            Web
 Build-type:          Simple
@@ -33,7 +33,8 @@ Executable rump
     time >= 1.1 && < 1.4,
     xmlhtml == 0.1.*,
     json >= 0.5,
-    curl >= 1.3.7
+    curl >= 1.3.7,
+    stm >= 2.2.0.1
 
 
   if flag(development)

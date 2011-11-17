@@ -18,20 +18,17 @@ import           Snap.Snaplet
 import           Snap.Util.FileServe
 import qualified Data.ByteString.Lazy.Char8 as L8
 import           Application
-import           Data.Typeable
-import           Data.Data
 import           Text.JSON.Generic
+import           RumpDomain 
+import           Plaza
 
 rump = do 
     body <- liftM L8.unpack getRequestBody
     liftIO $ putStrLn $ "body=" ++ body
-    let request = decodeJSON body :: RumpReq
-    let reply = [request] 
+    let request = decodeJSON body :: RumpInfo
+    reply <- liftIO $ findBuddies request
     writeLBS $ L8.pack $ encodeJSON $ reply  
  
-
-data RumpReq = RumpReq { userId :: String, displayName :: String, location :: GeoLoc} deriving (Data, Typeable, Show)
-data GeoLoc = GeoLoc { latitude :: Double, longitude :: Double } deriving (Data, Typeable, Show)
 
 routes :: [(ByteString, Handler App App ())]
 routes = [ ("/", rump)
