@@ -9,7 +9,7 @@ Location and URL based grouping is on the way...
 Protocol
 ========
 
-POST /<context>
+POST /yourservicenamehere
 
 Request payload:
 
