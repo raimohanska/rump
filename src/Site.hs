@@ -27,6 +27,7 @@ rump = do
     liftIO $ putStrLn $ "body=" ++ body
     let request = decodeJSON body :: RumpInfo
     reply <- liftIO $ findBuddies request
+    modifyResponse $ setContentType "application/json"
     writeLBS $ L8.pack $ encodeJSON $ reply  
  
 
