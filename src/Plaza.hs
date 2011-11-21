@@ -1,4 +1,4 @@
-module Plaza(findBuddies) where
+module Plaza where
 
 import RumpInfo
 import GeoLocation
@@ -17,6 +17,9 @@ findBuddies req = do m <- findMeeting req
                      atomically $ getParticipants m
 
 data Meeting = Meeting { participants :: (TVar [RumpInfo]), resultHolder :: TMVar [RumpInfo] } deriving (Eq)
+
+distanceLimit :: Meters
+distanceLimit = 1000
 
 currentMeetings :: TVar ([Meeting])
 currentMeetings = unsafePerformIO $ newTVarIO [] 
@@ -42,7 +45,7 @@ lookupMeeting dude = do openMeetings <- readTVar currentMeetings
 pickMeeting :: RumpInfo -> [Meeting] -> STM (Maybe Meeting)
 pickMeeting dude meetings = do
   distances <- sequence $ map (distanceToMeeting dude) meetings
-  return $ listToMaybe $ map fst $ sortWith (snd) (zip meetings distances)
+  return $ listToMaybe $ map fst $ filter ((<= distanceLimit) . snd) $ sortWith (snd) (zip meetings distances)
   where distanceToMeeting dude meeting = do dudes <- readTVar $ participants meeting 
                                             return $ minimum $ map (distance (location dude)) $ map location $ dudes
 
