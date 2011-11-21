@@ -9,15 +9,17 @@ import Control.Concurrent.STM.TVar
 import Control.Concurrent.STM.TMVar
 import Control.Monad.STM
 import System.IO.Unsafe
+import GHC.Exts(sortWith)
+import Data.Maybe(listToMaybe)
 
 findBuddies :: RumpInfo -> IO [RumpInfo]
 findBuddies req = do m <- findMeeting req 
                      atomically $ getParticipants m
 
-data Meeting = Meeting { participants :: (TVar [RumpInfo]), resultHolder :: TMVar [RumpInfo] }
+data Meeting = Meeting { participants :: (TVar [RumpInfo]), resultHolder :: TMVar [RumpInfo] } deriving (Eq)
 
-currentMeeting :: TVar (Maybe Meeting)
-currentMeeting = unsafePerformIO $ newTVarIO Nothing 
+currentMeetings :: TVar ([Meeting])
+currentMeetings = unsafePerformIO $ newTVarIO [] 
 
 findMeeting :: RumpInfo -> IO Meeting
 findMeeting dude = do
@@ -26,15 +28,23 @@ findMeeting dude = do
   return meeting
 
 lookupMeeting :: RumpInfo -> STM (Meeting, IO ())
-lookupMeeting dude = do current <- readTVar currentMeeting
+lookupMeeting dude = do openMeetings <- readTVar currentMeetings
+                        current <- pickMeeting dude openMeetings
                         case current of
                             Nothing -> do 
                               m <- newMeeting dude
-                              writeTVar currentMeeting (Just m)
+                              modifyTVar (m :) currentMeetings
                               return (m, scheduleMeeting m)
                             Just m -> do
                               modifyTVar (dude :) (participants m)
                               return (m, nop)
+
+pickMeeting :: RumpInfo -> [Meeting] -> STM (Maybe Meeting)
+pickMeeting dude meetings = do
+  distances <- sequence $ map (distanceToMeeting dude) meetings
+  return $ listToMaybe $ map fst $ sortWith (snd) (zip meetings distances)
+  where distanceToMeeting dude meeting = do dudes <- readTVar $ participants meeting 
+                                            return $ minimum $ map (distance (location dude)) $ map location $ dudes
 
 newMeeting :: RumpInfo -> STM Meeting
 newMeeting dude = do
@@ -48,7 +58,7 @@ scheduleMeeting m = void $ forkIO $ do
     atomically $ do
       allDudes <- readTVar (participants m)
       putTMVar (resultHolder m) allDudes
-      writeTVar currentMeeting Nothing
+      modifyTVar (filter (/= m)) currentMeetings
  
 getParticipants :: Meeting -> STM [RumpInfo]
 getParticipants meeting = readTMVar $ resultHolder meeting
