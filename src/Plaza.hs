@@ -1,6 +1,7 @@
 module Plaza(findBuddies) where
 
-import RumpDomain
+import RumpInfo
+import GeoLocation
 import Control.Concurrent(threadDelay, forkIO, ThreadId)
 import Control.Concurrent.MVar
 import Data.IORef

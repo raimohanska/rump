@@ -9,7 +9,7 @@ import           Data.ByteString (ByteString)
 import           Snap.Util.FileServe
 import qualified Data.ByteString.Lazy.Char8 as L8
 import           Text.JSON.Generic
-import           RumpDomain
+import           RumpInfo
 import           Plaza
 
 main :: IO ()
