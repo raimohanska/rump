@@ -1,10 +1,8 @@
 Rump
 ====
 
-Rump is a rendez-vous server for mobile clients, inspired by Bump. Rump matches meeting
-request by grouping incoming requests within 3 seconds. 
-
-Location and URL based grouping is on the way...
+Rump is a location-based rendez-vous server for mobile clients, inspired by Bump. Rump matches meeting
+request by grouping incoming requests within 3 seconds in 1000 meter distance.
 
 Installation
 ============
@@ -45,8 +43,8 @@ Request payload:
   "userId" : "jack", 
   "displayName" : "Jack Bauer", 
   "location": {
-    "latitude": 51.0,
-    "longitude": -0.1
+    "latitude":60.1687461,
+    "longitude":24.9409696
   }
 }
 ~~~
