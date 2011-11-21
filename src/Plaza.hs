@@ -45,7 +45,7 @@ lookupMeeting dude = do openMeetings <- readTVar currentMeetings
 pickMeeting :: RumpInfo -> [Meeting] -> STM (Maybe Meeting)
 pickMeeting dude meetings = do
   distances <- sequence $ map (distanceToMeeting dude) meetings
-  return $ listToMaybe $ map fst $ filter ((<= distanceLimit) . snd) $ sortWith (snd) (zip meetings distances)
+  return $ listToMaybe $ map fst $ filter ((<= distanceLimit) . snd) $ zip meetings distances
   where distanceToMeeting dude meeting = do dudes <- readTVar $ participants meeting 
                                             return $ minimum $ map (distance (location dude)) $ map location $ dudes
 
