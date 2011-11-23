@@ -12,9 +12,9 @@ import System.IO.Unsafe
 import GHC.Exts(sortWith)
 import Data.Maybe(listToMaybe)
 
-findBuddies :: RumpInfo -> IO [RumpInfo]
-findBuddies req = do m <- findMeeting req 
-                     atomically $ getParticipants m
+findBuddies :: String -> RumpInfo -> IO [RumpInfo]
+findBuddies app req = do m <- findMeeting req 
+                         atomically $ getParticipants m
 
 data Meeting = Meeting { participants :: (TVar [RumpInfo]), resultHolder :: TMVar [RumpInfo] } deriving (Eq)
 

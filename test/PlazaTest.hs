@@ -7,6 +7,12 @@ import Control.Concurrent.STM
 import RumpInfo
 import GeoLocation
 
+
+-- TODO: instead of poking at internals, create a test-helper method:
+
+openMeetingsWithParticipants :: STM [[String]]
+openMeetingsWithParticipants = undefined
+
 plazaTests = TestList [
   TestLabel "New meeting for new dude" $ TestCase $ do
     (m, _) <- atomically $ lookupMeeting dude

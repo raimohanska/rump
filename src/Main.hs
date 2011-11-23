@@ -12,25 +12,30 @@ import           Text.JSON.Generic
 import           RumpInfo
 import           Plaza
 import           GeoLocation
+import           Util.Http
 
 main :: IO ()
 main = serve defaultConfig
 
 serve :: Config Snap a -> IO()
 serve config = httpServe config $ route [ 
-  ("/", rump), 
+  ("/:app", rump), 
   ("", serveDirectory "resources/static")
   ] 
 
 rump = do 
-    body <- liftM L8.unpack getRequestBody
-    liftIO $ putStrLn $ "body=" ++ body
-    let request = decodeJSON body :: RumpInfo
-    reply <- liftIO $ findBuddies request
-    let distances = distancesBetween reply
-    liftIO $ putStrLn $ "distances=" ++ (show distances)
-    modifyResponse $ setContentType "application/json"
-    writeLBS $ L8.pack $ encodeJSON $ reply  
+    body <- readBody
+    appPar <- getPar("app")
+    case appPar of
+      Nothing -> notFound
+      Just(app) -> do 
+        liftIO $ putStrLn $ "app=" ++ app ++ " body=" ++ body
+        let request = decodeJSON body :: RumpInfo
+        reply <- liftIO $ findBuddies app request
+        let distances = distancesBetween reply
+        liftIO $ putStrLn $ "distances=" ++ (show distances)
+        modifyResponse $ setContentType "application/json"
+        writeResponse $ encodeJSON $ reply  
 
 data DistanceBetween a = DistanceBetween a a Meters
 instance Show a => Show (DistanceBetween a) where
