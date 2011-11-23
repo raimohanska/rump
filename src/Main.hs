@@ -1,13 +1,9 @@
 {-# LANGUAGE OverloadedStrings, DeriveDataTypeable #-}
 module Main where
 import           Snap.Http.Server
-import           Snap.Http.Server.Config
 import           Snap.Core
-import           Control.Monad
 import           Control.Monad.Trans
-import           Data.ByteString (ByteString)
 import           Snap.Util.FileServe
-import qualified Data.ByteString.Lazy.Char8 as L8
 import           Text.JSON.Generic
 import           RumpInfo
 import           Plaza
