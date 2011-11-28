@@ -2,8 +2,7 @@ module Plaza where
 
 import RumpInfo
 import GeoLocation
-import Control.Concurrent(threadDelay, forkIO, ThreadId)
-import Control.Concurrent.MVar
+import Control.Concurrent(threadDelay, forkIO)
 import Control.Concurrent.STM.TVar
 import Control.Concurrent.STM.TMVar
 import Control.Monad.STM
@@ -61,6 +60,7 @@ scheduleMeeting m = void $ forkIO $ do
     atomically $ do
       allDudes <- readTVar (participants m)
       putTMVar (resultHolder m) allDudes
+      writeTVar (participants m) []
       modifyTVar (filter (/= m)) currentMeetings
  
 getParticipants :: Meeting -> STM [RumpInfo]
