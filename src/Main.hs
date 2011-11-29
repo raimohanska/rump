@@ -14,12 +14,14 @@ main :: IO ()
 main = serve defaultConfig
 
 serve :: Config Snap a -> IO()
-serve config = httpServe config $ route [ 
-  ("/:app", rump), 
-  ("", serveDirectory "resources/static")
-  ] 
+serve config = do
+    plaza <- newPlaza
+    httpServe config $ route [ 
+      ("/:app", rump plaza), 
+      ("", serveDirectory "resources/static")
+      ]
 
-rump = do 
+rump plaza = do 
     body <- readBody
     appPar <- getPar("app")
     case appPar of
@@ -27,7 +29,7 @@ rump = do
       Just(app) -> do 
         liftIO $ putStrLn $ "app=" ++ app ++ " body=" ++ body
         let request = decodeJSON body :: RumpInfo
-        reply <- liftIO $ findBuddies app request
+        reply <- liftIO $ findBuddies plaza app request
         let distances = distancesBetween reply
         liftIO $ putStrLn $ "distances=" ++ (show distances)
         modifyResponse $ setContentType "application/json"
