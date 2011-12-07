@@ -7,15 +7,9 @@ import qualified Util.HttpClient as HTTP
 import Text.Regex.XMLSchema.String(match)
 import Control.Exception(finally)
 import Util.RegexEscape(escape)
-
-wrapTest :: Wrapper -> Test -> Test
-wrapTest wrapper (TestCase a) = TestCase $ wrapper a
-wrapTest wrapper (TestList tests) = TestList $ map (wrapTest wrapper) tests
-wrapTest wrapper (TestLabel label test) = TestLabel label $ wrapTest wrapper test
+import Util.TestWrapper
 
 data ExpectedResult = Matching String | Exactly String | ReturnCode Int | All [ExpectedResult]
-
-type Wrapper = IO () -> IO ()
 
 post desc root path request expected = 
   httpTest desc (HTTP.post (root ++ path) request) expected
@@ -26,7 +20,6 @@ get desc root path expected =
 httpTest :: String -> IO (Int, String) -> ExpectedResult -> Test
 httpTest desc request expected = TestLabel desc $ TestCase $ do
     (code, body) <- request
-    putStrLn $ "Got reply : " ++ body
     verify (code, body) expected
   where
       verify (code, body) expected = case expected of
