@@ -1,4 +1,4 @@
-module Plaza(findMeeting, lookupMeeting, participants, currentMeetings, newPlaza) where
+module Plaza(findBuddies, findMeeting, lookupMeeting, participants, currentMeetings, newPlaza) where
 
 import RumpInfo
 import GeoLocation

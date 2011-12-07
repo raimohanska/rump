@@ -40,17 +40,17 @@ Executable rump
 
   if flag(development)
     cpp-options: -DDEVELOPMENT
-    -- In development mode, speed is already going to suffer, so skip
-    -- the fancy optimization flags.  Additionally, disable all
-    -- warnings.  The hint library doesn't give an option to execute
-    -- compiled code when there were also warnings, so disabling
-    -- warnings allows quicker workflow.
     ghc-options: -threaded -w
   else
-    if impl(ghc >= 6.12.0)
-      ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
-                   -fno-warn-orphans -fno-warn-unused-do-bind
-    else
-      ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
-                   -fno-warn-orphans
+    ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
+                 -fno-warn-orphans -fno-warn-unused-do-bind
+
+Test-Suite tests
+  hs-source-dirs: src, test
+  Type:           exitcode-stdio-1.0
+  Main-is:        Specs.hs
+  Build-depends:  base, HUnit >= 1.2.2.3, hspec >= 0.9.0, hxt-regex-xmlschema >= 9.0.1, HTTP >= 4000.2.1
+  ghc-options:    -threaded
+  default-language: Haskell2010
+
 
