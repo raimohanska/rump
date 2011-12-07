@@ -1,4 +1,4 @@
-module Plaza(findBuddies, findMeeting, lookupMeeting, participants, currentMeetings, newPlaza) where
+module Plaza(newPlaza, findBuddies) where 
 
 import RumpInfo
 import GeoLocation
@@ -14,12 +14,12 @@ findBuddies :: Plaza -> String -> RumpInfo -> IO [RumpInfo]
 findBuddies plaza app req = do m <- findMeeting plaza app req 
                                atomically $ getParticipants m
 
+newPlaza :: IO Plaza
+newPlaza = liftM Plaza $ newTVarIO []
+
 data Meeting = Meeting { app :: String, participants :: (TVar [RumpInfo]), resultHolder :: TMVar [RumpInfo] } deriving (Eq)
 
 data Plaza = Plaza { currentMeetings :: TVar [Meeting] }
-
-newPlaza :: IO Plaza
-newPlaza = liftM Plaza $ newTVarIO []
 
 distanceLimit :: Meters
 distanceLimit = 1000
