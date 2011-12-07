@@ -18,7 +18,7 @@ functionalTests = wrapTest withTestServer $ TestList [
   post "New meeting for new dude" url "/testing" john $ Exactly justJohn
   ,parallelTests "Similar requests to common meeting" [
       post "John" url "/testing" john $ Exactly jackAndJohn
-      ,delayTest $ post "Jack" url "/testing" jack $ Exactly jackAndJohn
+      ,delayTest 1000 $ post "Jack" url "/testing" jack $ Exactly jackAndJohn
       ,post "Saddam" url "/testing" saddam $ Exactly justSaddam
     ]
   ]

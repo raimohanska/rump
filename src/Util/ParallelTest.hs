@@ -6,7 +6,7 @@ import Control.Monad
 import Util.TestWrapper
 import Test.HUnit
 
-delayTest = wrapTest $ \test -> threadDelay 1000000 >> test
+delayTest millis = wrapTest $ \test -> threadDelay (millis * 1000) >> test
 
 parallelTests label tests = TestLabel label $ TestCase $ do
     forks <- mapM forkTest tests
