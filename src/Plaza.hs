@@ -58,7 +58,7 @@ newMeeting app dude = do
   return $ Meeting app participantsRef resultHolder 
 
 scheduleMeeting :: Plaza -> Meeting -> IO ()
-scheduleMeeting p m = void $ forkIO $ do
+scheduleMeeting p m = do
     threadDelay $ toMicros 3 
     atomically $ do
       allDudes <- readTVar (participants m)
