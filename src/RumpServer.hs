@@ -21,6 +21,7 @@ serve config = do
       ("", serveDirectory "resources/static")
       ]
 
+rump :: Plaza -> Snap ()
 rump plaza = do 
     body <- readBody
     appPar <- getPar("app")

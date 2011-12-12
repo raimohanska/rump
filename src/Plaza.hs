@@ -1,4 +1,4 @@
-module Plaza(newPlaza, findBuddies) where 
+module Plaza(newPlaza, findBuddies, Plaza) where 
 
 import RumpInfo
 import GeoLocation
