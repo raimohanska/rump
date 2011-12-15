@@ -1,0 +1,17 @@
+Source: rump
+Section: net
+Priority: extra
+Maintainer: Teemu Matilainen <teemu.matilainen@reaktor.fi>
+Build-Depends: debhelper (>= 7.0.50~), libcurl4-openssl-dev
+Standards-Version: 3.9.1
+Homepage: https://github.com/raimohanska/rump
+Vcs-Git: git://github.com/raimohanska/rump.git
+Vcs-Browser: https://github.com/raimohanska/rump
+
+Package: rump
+Architecture: any
+Depends: adduser, daemon, ${shlibs:Depends}, ${misc:Depends}
+Description: Location-based rendez-vous server for mobile clients
+ Rump is a location-based rendez-vous server for mobile clients, inspired by
+ Bump. Rump matches meeting request by grouping incoming requests within 3
+ seconds in 1000 meter distance.

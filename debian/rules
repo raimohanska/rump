@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+
+CABAL=/usr/local/bin/cabal
+GHC=/usr/local/bin/ghc
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+	$(CABAL) clean
+
+override_dh_auto_configure:
+	$(CABAL) update
+	$(CABAL) install --with-ghc=$(GHC) --only-dependencies
+	$(CABAL) configure --with-ghc=$(GHC)
+
+override_dh_auto_build:
+	$(CABAL) build
+
+override_dh_auto_install:
+	$(CABAL) install --with-ghc=$(GHC) --bindir=$(CURDIR)/debian/rump/usr/lib/rump

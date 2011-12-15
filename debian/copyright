@@ -1,0 +1,15 @@
+Format: http://dep.debian.net/deps/dep5
+Upstream-Name: rump
+Source: <https://github.com/raimohanska/rump>
+
+Files: *
+Copyright: 2011 Juha Paananen <juha.paananen@reaktor.fi>
+License: GPL-3.0+
+
+Files: debian/*
+Copyright: 2011 Reaktor Innovations Oy
+License: GPL-3.0+
+
+License: GPL-3.0+
+ The full text of the GPL is distributed as in
+ /usr/share/common-licenses/GPL-3 on Debian systems.

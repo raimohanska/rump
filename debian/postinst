@@ -1,0 +1,14 @@
+#!/bin/sh -e
+
+if [ "$1" = "configure" ]; then
+	if ! getent passwd rump >/dev/null; then
+		adduser --quiet --system --no-create-home --home /var/run/rump \
+		    --shell /usr/sbin/nologin rump
+	fi
+	chown rump:adm /var/log/rump
+	chmod u+rwx /var/log/rump
+fi
+
+#DEBHELPER#
+
+exit 0

@@ -1,0 +1,15 @@
+# defaults for rump server
+
+# user id to be invoked as (otherwise will run as root; not wise!)
+RUMP_USER=rump
+
+# location of the rump server
+RUMP_DIR="/var/run/rump"
+RUMP="/usr/lib/rump/rump"
+
+# log location. this may be a syslog facility.priority
+RUMP_LOG_DIR="/var/log/rump"
+RUMP_LOG="$RUMP_LOG_DIR/stdout.log"
+
+# arguments to pass to rump
+RUMP_ARGS=""

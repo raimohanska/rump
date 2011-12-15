@@ -1,0 +1,4 @@
+rump for Debian
+---------------
+
+Building the Debian package requires recent Haskell Platform to be installed.

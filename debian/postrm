@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+if [ "$1" = "purge" ]; then
+    if which deluser >/dev/null 2>&1; then
+	deluser --quiet rump > /dev/null || true
+    fi
+    rm -rf /var/log/rump /var/run/rump
+fi
+
+#DEBHELPER#
+
+exit 0
