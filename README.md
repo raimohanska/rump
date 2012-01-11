@@ -63,3 +63,10 @@ Response (with matches):
   { "userId" : "jack", "displayName" : "Jack Bauer", ... }
 ]
 ~~~
+
+Test suite
+==========
+
+Rump has a simple test suite that starts the server and does some test
+requests to ensure that it works correctly. The easiest way to run the
+test is to use the script `run-tests.sh`.
