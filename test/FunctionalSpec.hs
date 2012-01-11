@@ -1,4 +1,4 @@
-module FunctionalSpec where
+module FunctionalSpec(functionalTests) where
 
 import Snap.Http.Server.Config
 import Test.HUnit
@@ -27,3 +27,5 @@ port = 8001
 url= "http://localhost:" ++ (show port) 
 
 withTestServer = withForkedServer $ RumpServer.serve (setPort port defaultConfig) 
+
+main = runTestTT functionalTests
