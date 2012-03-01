@@ -29,13 +29,13 @@ newMeeting a dude removeMeeting = unsafeIOToSTM $ do
   return m
 
 scheduleMeeting :: Meeting -> EventStream () -> (Meeting -> STM ()) -> IO ()
-scheduleMeeting m stream removeMeeting = do
-    afterJoin <- delayE (seconds 1) stream
-    laterE (seconds 3) () >>= mergeE afterJoin >>=! \_ -> atomically $ do
+scheduleMeeting m join removeMeeting = do
+    afterJoin <- delayE (seconds 1) join
+    laterE (seconds 3) () >>= mergeE afterJoin >>=! const (atomically $ do
       allDudes <- readTVar (participants m)
       putTMVar (resultHolder m) allDudes
       writeTVar (participants m) []
-      removeMeeting m
+      removeMeeting m)
 
 currentParticipants :: Meeting -> STM [RumpInfo]
 currentParticipants = readTVar . participants
