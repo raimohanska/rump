@@ -2,22 +2,17 @@ module Plaza(newPlaza, findBuddies, Plaza) where
 
 import RumpInfo
 import GeoLocation
-import Control.Concurrent(threadDelay, forkIO)
-import Control.Concurrent.STM.TVar
-import Control.Concurrent.STM.TMVar
-import Control.Monad.STM
+import Control.Concurrent.STM
 import Control.Monad
-import System.IO.Unsafe
 import Data.Maybe(listToMaybe)
+import Meeting
 
 findBuddies :: Plaza -> String -> RumpInfo -> IO [RumpInfo]
 findBuddies plaza app req = do m <- findMeeting plaza app req 
-                               atomically $ getParticipants m
+                               atomically $ finalParticipants m
 
 newPlaza :: IO Plaza
 newPlaza = liftM Plaza $ newTVarIO []
-
-data Meeting = Meeting { app :: String, participants :: (TVar [RumpInfo]), resultHolder :: TMVar [RumpInfo] } deriving (Eq)
 
 data Plaza = Plaza { currentMeetings :: TVar [Meeting] }
 
@@ -26,53 +21,32 @@ distanceLimit = 1000
 
 findMeeting :: Plaza -> String -> RumpInfo -> IO Meeting
 findMeeting plaza app dude = do
-  (meeting, initializer) <- atomically $ lookupMeeting plaza app dude
-  initializer
+  meeting <- atomically $ lookupMeeting plaza app dude
   return meeting
 
-lookupMeeting :: Plaza -> String -> RumpInfo -> STM (Meeting, IO ())
+lookupMeeting :: Plaza -> String -> RumpInfo -> STM Meeting
 lookupMeeting plaza app dude = 
   do openMeetings <- readTVar $ currentMeetings plaza
      current <- pickMeeting app dude openMeetings
      case current of
         Nothing -> do 
-          m <- newMeeting app dude
+          m <- newMeeting app dude $ removeMeeting plaza
           modifyTVar (m :) $ currentMeetings plaza
-          return (m, scheduleMeeting plaza m)
+          return m
         Just m -> do
-          modifyTVar (dude :) (participants m)
-          return (m, nop)
+          addParticipant m dude
+          return m
+
+removeMeeting p m = modifyTVar (filter (/= m)) $ currentMeetings p 
 
 pickMeeting :: String -> RumpInfo -> [Meeting] -> STM (Maybe Meeting)
 pickMeeting application dude allMeetings = do
   let meetings = filter ((== application) . app) allMeetings
   distances <- sequence $ map (distanceToMeeting dude) meetings
   return $ listToMaybe $ map fst $ filter ((<= distanceLimit) . snd) $ zip meetings distances
-  where distanceToMeeting dude meeting = do dudes <- readTVar $ participants meeting 
+  where distanceToMeeting dude meeting = do dudes <- currentParticipants meeting 
                                             return $ minimum $ map (distance (location dude)) $ map location $ dudes
 
-newMeeting :: String -> RumpInfo -> STM Meeting
-newMeeting app dude = do
-  resultHolder <- newEmptyTMVar
-  participantsRef <- newTVar [dude]
-  return $ Meeting app participantsRef resultHolder 
-
-scheduleMeeting :: Plaza -> Meeting -> IO ()
-scheduleMeeting p m = do
-    threadDelay $ toMicros 3 
-    atomically $ do
-      allDudes <- readTVar (participants m)
-      putTMVar (resultHolder m) allDudes
-      writeTVar (participants m) []
-      modifyTVar (filter (/= m)) $ currentMeetings p
- 
-getParticipants :: Meeting -> STM [RumpInfo]
-getParticipants meeting = readTMVar $ resultHolder meeting
-
-toMicros = (*1000000)
-nop = return ()
 modifyTVar f var = do
   val <- readTVar var
   writeTVar var (f val)
-
-
