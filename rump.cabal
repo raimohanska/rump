@@ -38,7 +38,7 @@ Executable rump
     curl >= 1.3.7,
     stm >= 2.2.0.1,
     Geodetic >= 0.4,
-    reactive-bacon == 0.2
+    reactive-bacon == 0.3
 
 
   if flag(development)

@@ -1,4 +1,4 @@
-module Meeting(newMeeting, addParticipant, currentParticipants, finalParticipants, app, Meeting) where 
+module Meeting(newMeeting, addParticipant, notifyParticipant, currentParticipants, finalParticipants, app, Meeting) where 
 
 import RumpInfo
 import Control.Concurrent.STM.TVar
@@ -10,7 +10,7 @@ import Reactive.Bacon
 data Meeting = Meeting { 
   app :: String, 
   participants :: (TVar [RumpInfo]), 
-  addParticipant :: (RumpInfo -> STM ()),
+  notifyParticipant :: (RumpInfo -> IO ()),
   resultHolder :: TMVar [RumpInfo] 
   }
 
@@ -21,14 +21,17 @@ newMeeting :: String -> RumpInfo -> (Meeting -> STM ()) -> STM Meeting
 newMeeting a dude removeMeeting = unsafeIOToSTM $ do
   resultHolder <- newEmptyTMVarIO
   participantsRef <- newTVarIO [dude]
-  let pushParticipant = \newGuy -> modifyTVar (newGuy :) participantsRef
+  (stream, push) <- newPushStream
+  let pushParticipant = \newGuy -> do atomically $ modifyTVar (newGuy :) participantsRef
+                                      push $ Next ()
   let m = Meeting a participantsRef pushParticipant resultHolder 
-  scheduleMeeting m removeMeeting
+  scheduleMeeting m stream removeMeeting
   return m
 
-scheduleMeeting :: Meeting -> (Meeting -> STM ()) -> IO ()
-scheduleMeeting m removeMeeting = do
-    laterE (seconds 3) () >>=! \_ -> atomically $ do
+scheduleMeeting :: Meeting -> EventStream () -> (Meeting -> STM ()) -> IO ()
+scheduleMeeting m stream removeMeeting = do
+    afterJoin <- delayE (seconds 1) stream
+    laterE (seconds 3) () >>= mergeE afterJoin >>=! \_ -> atomically $ do
       allDudes <- readTVar (participants m)
       putTMVar (resultHolder m) allDudes
       writeTVar (participants m) []
@@ -36,6 +39,8 @@ scheduleMeeting m removeMeeting = do
 
 currentParticipants :: Meeting -> STM [RumpInfo]
 currentParticipants = readTVar . participants
+
+addParticipant m dude = modifyTVar (dude :) $ participants m
  
 finalParticipants :: Meeting -> STM [RumpInfo]
 finalParticipants meeting = readTMVar $ resultHolder meeting

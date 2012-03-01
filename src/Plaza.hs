@@ -21,10 +21,11 @@ distanceLimit = 1000
 
 findMeeting :: Plaza -> String -> RumpInfo -> IO Meeting
 findMeeting plaza app dude = do
-  meeting <- atomically $ lookupMeeting plaza app dude
+  (meeting, initializer) <- atomically $ lookupMeeting plaza app dude
+  initializer
   return meeting
 
-lookupMeeting :: Plaza -> String -> RumpInfo -> STM Meeting
+lookupMeeting :: Plaza -> String -> RumpInfo -> STM (Meeting, IO ())
 lookupMeeting plaza app dude = 
   do openMeetings <- readTVar $ currentMeetings plaza
      current <- pickMeeting app dude openMeetings
@@ -32,10 +33,10 @@ lookupMeeting plaza app dude =
         Nothing -> do 
           m <- newMeeting app dude $ removeMeeting plaza
           modifyTVar (m :) $ currentMeetings plaza
-          return m
+          return (m, return ())
         Just m -> do
           addParticipant m dude
-          return m
+          return (m, notifyParticipant m dude)
 
 removeMeeting p m = modifyTVar (filter (/= m)) $ currentMeetings p 
 
